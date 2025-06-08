@@ -1,3 +1,3 @@
-# BRISA Helpdesk
+# BRISA Helpdesk Backend
 
-[Brisa Helpdesk](brisahelpdesk.github.io) backend API.
+[Brisa Helpdesk](brisahelpdesk.github.io) backend project.
