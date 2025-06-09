@@ -4,7 +4,9 @@ This is the backend project for [BRISA Helpdesk](https://brisahelpdesk.github.io
 
 ## Technological Stack
 
-The application follows a monolithic architecture and is built using the **NestJS** framework.
+The application follows a monolithic architecture and is built using the **NestJS** framework and **PostgreSQL** (v16.9) as relational database.
+
+For more information on the project stack take a look at our [documentation](https://brisahelpdesk.github.io/planning/tech-stack/).
 
 ## Directory Overview
 
@@ -20,3 +22,9 @@ The application follows a monolithic architecture and is built using the **NestJ
 - `README.md`: Project overview and setup instructions  
 - `tsconfig.build.json`: TypeScript configuration for the build process  
 - `tsconfig.json`: Base TypeScript configuration file  
+
+## Project Conventions
+
+### Git Branching Model
+
+We adopted [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) as our git branching model.
