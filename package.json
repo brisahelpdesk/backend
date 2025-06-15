@@ -2,7 +2,7 @@
   "name": "brisa-helpdesk-be",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Maelton Lima dos Santos",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -71,5 +71,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
   }
 }
