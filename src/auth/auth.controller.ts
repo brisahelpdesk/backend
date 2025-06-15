@@ -6,6 +6,8 @@ import { AuthService } from './auth.service';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @Post('login')
-    login(@Body() userLoginDto: UserLoginDto) {}
+    @Post('signIn')
+    login(@Body() userLoginDto: UserLoginDto) {
+      return userLoginDto;
+    }
 }
