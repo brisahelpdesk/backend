@@ -4,6 +4,14 @@
   "sourceRoot": "src",
   "entryFile": "main",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "assets": [
+      {
+        "include": "prisma/generated",
+        "outDir": "dist/",
+        "watchAssets": true
+      }
+    ],
+    "watchAssets": true
   }
 }

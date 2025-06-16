@@ -1,0 +1,44 @@
+import { Injectable } from '@nestjs/common';
+import { UserLoginDto } from 'src/user/dto/user-login.dto';
+import { UserRepository } from '../user/user.repository';
+import { User } from '@prisma-generated/client';
+import { InvalidCredentialsException } from './exception/invalid-credentials.exception';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from "@nestjs/jwt";
+
+@Injectable()
+export class AuthService {
+    constructor(
+      private readonly userRepository: UserRepository,
+      private readonly jwtService: JwtService
+    ) {}
+
+    async login(userLoginDto: UserLoginDto): Promise<string> {
+        const { username, password } = userLoginDto;
+        const user: User = await this.validateUsername(username);
+        if(await this.validatePassword(password, user.password)) {
+            return this.generateJwt(user);
+        }
+        throw new InvalidCredentialsException();
+    }
+
+    private async validateUsername(username: string): Promise<User> {
+        const user: User | null = await this.userRepository.findByEmail(username);
+        if (!user) {
+            throw new InvalidCredentialsException();
+        }
+        return user;
+    }
+
+    private async validatePassword(plainPassword: string, hashCodedPassword: string): Promise<boolean> {
+        return await bcrypt.compare(plainPassword, hashCodedPassword);
+    }
+
+    private async generateJwt(user: User): Promise<string> {
+      const payload = {
+        email: user.email,
+        roles: [],
+      }
+      return this.jwtService.signAsync(payload, {subject: user.uuid});
+    }
+}
