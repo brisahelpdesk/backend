@@ -16,6 +16,7 @@ datasource db {
 
 model User {
   id       BigInt @id
+  uuid     String @default(uuid(4))
   name     String
   email    String @unique
   password String
