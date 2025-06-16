@@ -77,6 +77,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma"
+    "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
   }
 }

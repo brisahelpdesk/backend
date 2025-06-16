@@ -3,14 +3,15 @@ import { UserLoginDto } from 'src/user/dto/user-login.dto';
 import { UserRepository } from '../user/user.repository';
 import { User } from '@prisma-generated/client';
 import { InvalidCredentialsException } from './exception/invalid-credentials.exception';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
+import { HashService } from "../common/hash/hash.service";
 
 @Injectable()
 export class AuthService {
     constructor(
       private readonly userRepository: UserRepository,
-      private readonly jwtService: JwtService
+      private readonly jwtService: JwtService,
+      private readonly hashService: HashService,
     ) {}
 
     async login(userLoginDto: UserLoginDto): Promise<string> {
@@ -31,7 +32,7 @@ export class AuthService {
     }
 
     private async validatePassword(plainPassword: string, hashCodedPassword: string): Promise<boolean> {
-        return await bcrypt.compare(plainPassword, hashCodedPassword);
+        return this.hashService.compare(plainPassword, hashCodedPassword);
     }
 
     private async generateJwt(user: User): Promise<string> {
