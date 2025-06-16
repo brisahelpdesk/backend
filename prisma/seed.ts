@@ -1,4 +1,4 @@
-import { PrismaService } from "../src/prisma/prisma.service";
+import { PrismaService } from "../src/common/prisma/prisma.service";
 import { HashService } from "../src/common/hash/hash.service";
 
 const prisma = new PrismaService();
