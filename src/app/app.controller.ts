@@ -6,7 +6,10 @@ import { ApiResponse } from "@nestjs/swagger";
 export class AppController {
     constructor(private readonly appService: AppService) {}
 
-    @Get()
+  /**
+   * Home
+   */
+  @Get()
     @Redirect('https://brisahelpdesk.github.io', 302)
     @ApiResponse({ status: 302, description: 'Redireciona para página de documentação do projeto.'})
     app(): void {}
