@@ -9,7 +9,6 @@ async function main() {
       where: {id: 1},
       update: {},
       create: {
-        name: "Admin",
         email: "admin@api.com",
         password: await hashService.hash("admin")
       }

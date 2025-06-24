@@ -17,9 +17,20 @@ datasource db {
 model User {
   id       BigInt @id @default(autoincrement())
   uuid     String @unique @default(uuid(4))
-  name     String
   email    String @unique
   password String
 
+  client Client?
+
   @@map("tb_user")
+}
+
+model Client {
+  id     BigInt @id
+  uuid   String @unique @default(uuid(4))
+  tax_id String @unique
+
+  user User @relation(fields: [id], references: [id])
+
+  @@map("tb_client")
 }
