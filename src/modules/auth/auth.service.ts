@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserLoginDto } from 'src/user/dto/user-login.dto';
+import { UserLoginDto } from '../user/dto/user-login.dto';
 import { UserRepository } from '../user/user.repository';
 import { User } from '@prisma-generated/client';
 import { InvalidCredentialsException } from './exception/invalid-credentials.exception';
 import { JwtService } from '@nestjs/jwt';
-import { HashService } from '../common/hash/hash.service';
+import { HashService } from '../../common/hash/hash.service';
 
 @Injectable()
 export class AuthService {
