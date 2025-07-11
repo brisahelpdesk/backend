@@ -1,25 +1,43 @@
 export interface ChatModule {
   /**
-   * Cria sala de chat para um chamado.
+   * Creates a chat room for a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  createChatRoom(ticketId: string): Promise<string>; // retorna chatRoomId
+  createChatRoom(ticketId: string): Promise<{
+    chatRoomId: string;
+    createdAt: Date;
+  }>;
 
   /**
-   * Envia mensagem em tempo real.
+   * Sends a real-time message in a chat room.
+   * @throws {ChatRoomNotFoundException} If chat room does not exist
+   * @throws {UserNotFoundException} If sender does not exist
    */
   sendMessage(chatRoomId: string, data: {
     senderId: string;
     message: string;
     attachments?: string[];
-  }): Promise<void>;
+  }): Promise<{
+    messageId: string;
+    sentAt: Date;
+  }>;
 
   /**
-   * Busca histórico de mensagens do chat.
+   * Retrieves chat message history.
+   * @throws {ChatRoomNotFoundException} If chat room does not exist
    */
-  getChatHistory(chatRoomId: string): Promise<any[]>;
+  getChatHistory(chatRoomId: string): Promise<Array<{
+    id: string;
+    senderId: string;
+    message: string;
+    attachments?: string[];
+    sentAt: Date;
+  }>>;
 
   /**
-   * Notifica usuários sobre novas mensagens.
+   * Notifies users about new messages.
+   * @throws {ChatRoomNotFoundException} If chat room does not exist
+   * @throws {UserNotFoundException} If user does not exist
    */
-  notifyNewMessage(chatRoomId: string, userId: string): Promise<void>;
+  notifyNewMessage(chatRoomId: string, userId: string): Promise<{ notified: boolean }>;
 } 

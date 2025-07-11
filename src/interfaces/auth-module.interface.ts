@@ -1,31 +1,78 @@
 export interface AuthModule {
   /**
-   * Autentica usuário com e-mail e senha.
+   * Authenticates user with email and password.
+   * @throws {InvalidCredentialsException} If credentials are invalid
+   * @throws {UserNotFoundException} If user does not exist
+   * @throws {UserNotActiveException} If user account is disabled
    */
-  login(email: string, password: string): Promise<{ token: string; refreshToken: string }>;
+  login(email: string, password: string): Promise<{
+    token: string;
+    refreshToken: string;
+    expiresIn: number;
+    user: {
+      id: string;
+      email: string;
+      role: string;
+    };
+  }>;
 
   /**
-   * Realiza autenticação em dois fatores (2FA).
+   * Performs two-factor authentication (2FA).
+   * @throws {InvalidCodeException} If verification code is invalid
+   * @throws {CodeExpiredException} If verification code has expired
    */
-  verify2FA(userId: string, code: string): Promise<boolean>;
+  verify2FA(userId: string, code: string): Promise<{
+    verified: boolean;
+    token: string;
+    refreshToken: string;
+  }>;
 
   /**
-   * Força troca de senha e configuração de pergunta de segurança no primeiro acesso.
+   * Forces password change and security question setup on first access.
+   * @throws {UserNotFoundException} If user does not exist
+   * @throws {WeakPasswordException} If new password doesn't meet security requirements
    */
-  firstAccess(userId: string, newPassword: string, securityQuestion: string, securityAnswer: string): Promise<void>;
+  firstAccess(userId: string, data: {
+    newPassword: string;
+    securityQuestion: string;
+    securityAnswer: string;
+  }): Promise<{
+    success: boolean;
+    requiresPasswordChange: boolean;
+  }>;
 
   /**
-   * Recupera senha via pergunta de segurança.
+   * Recovers password using security question.
+   * @throws {UserNotFoundException} If user does not exist
+   * @throws {InvalidAnswerException} If security answer is incorrect
+   * @throws {WeakPasswordException} If new password doesn't meet security requirements
    */
-  recoverPassword(email: string, securityAnswer: string, newPassword: string): Promise<void>;
+  recoverPassword(email: string, data: {
+    securityAnswer: string;
+    newPassword: string;
+  }): Promise<{
+    success: boolean;
+    requiresPasswordChange: boolean;
+  }>;
 
   /**
-   * Gera e renova tokens de sessão (JWT).
+   * Generates and renews session tokens (JWT).
+   * @throws {InvalidTokenException} If refresh token is invalid
+   * @throws {TokenExpiredException} If refresh token has expired
    */
-  refreshToken(token: string): Promise<{ token: string; refreshToken: string }>;
+  refreshToken(token: string): Promise<{
+    token: string;
+    refreshToken: string;
+    expiresIn: number;
+  }>;
 
   /**
-   * Valida permissões de acordo com o perfil do usuário.
+   * Validates permissions according to user role.
+   * @throws {UnauthorizedException} If user lacks required permissions
+   * @throws {UserNotFoundException} If user does not exist
    */
-  validatePermissions(userId: string, requiredRole: string): Promise<boolean>;
+  validatePermissions(userId: string, requiredRole: 'ADMIN' | 'SUPERVISOR' | 'AGENT' | 'CLIENT'): Promise<{
+    hasPermission: boolean;
+    userRole: string;
+  }>;
 } 

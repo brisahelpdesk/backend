@@ -1,6 +1,8 @@
 export interface NotificationModule {
   /**
-   * Envia notificação por e-mail ou outro canal.
+   * Sends a notification by email or other channel.
+   * @throws {UserNotFoundException} If user does not exist
+   * @throws {NotificationChannelException} If notification channel fails
    */
   sendNotification(data: {
     userId: string;
@@ -8,15 +10,17 @@ export interface NotificationModule {
     subject: string;
     message: string;
     templateId?: string;
-  }): Promise<void>;
+  }): Promise<{ sent: boolean; channel: string; sentAt: Date }>;
 
   /**
-   * Gerencia preferências de notificação do usuário.
+   * Manages user notification preferences.
+   * @throws {UserNotFoundException} If user does not exist
    */
-  setUserPreferences(userId: string, preferences: any): Promise<void>;
+  setUserPreferences(userId: string, preferences: any): Promise<{ updated: boolean }>;
 
   /**
-   * Emite alertas e lembretes.
+   * Sends alerts and reminders.
+   * @throws {UserNotFoundException} If user does not exist
    */
-  sendAlert(userId: string, alertType: string, message: string): Promise<void>;
+  sendAlert(userId: string, alertType: string, message: string): Promise<{ sent: boolean; alertType: string; sentAt: Date }>;
 } 

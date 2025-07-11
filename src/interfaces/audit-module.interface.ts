@@ -20,4 +20,4 @@ export interface AuditModule {
     context?: string;
     dateRange?: { from: Date; to: Date };
   }): Promise<any[]>;
-} 
+}

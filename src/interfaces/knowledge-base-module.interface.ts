@@ -1,6 +1,8 @@
 export interface KnowledgeBaseModule {
   /**
-   * Cria ou edita artigo da base de conhecimento.
+   * Creates or updates a knowledge base article.
+   * @throws {ArticleNotFoundException} If article does not exist when updating
+   * @throws {DuplicateArticleException} If article title already exists
    */
   upsertArticle(data: {
     id?: string;
@@ -11,25 +13,51 @@ export interface KnowledgeBaseModule {
     authorId: string;
     status?: 'DRAFT' | 'REVIEW' | 'PUBLISHED' | 'DISABLED';
     attachments?: string[];
-  }): Promise<string>; // retorna articleId
+  }): Promise<{
+    articleId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
 
   /**
-   * Publica ou desativa artigo.
+   * Publishes or disables an article.
+   * @throws {ArticleNotFoundException} If article does not exist
    */
-  setArticleStatus(articleId: string, status: 'PUBLISHED' | 'DISABLED'): Promise<void>;
+  setArticleStatus(articleId: string, status: 'PUBLISHED' | 'DISABLED'): Promise<{ updated: boolean; updatedAt: Date }>;
 
   /**
-   * Avalia artigo.
+   * Rates an article.
+   * @throws {ArticleNotFoundException} If article does not exist
+   * @throws {UserNotFoundException} If user does not exist
    */
-  rateArticle(articleId: string, userId: string, rating: number, comment?: string): Promise<void>;
+  rateArticle(articleId: string, userId: string, rating: number, comment?: string): Promise<{ rated: boolean; rating: number; ratedAt: Date }>;
 
   /**
-   * Sugere artigos por palavras-chave.
+   * Suggests articles by keywords.
    */
-  suggestArticles(keywords: string[]): Promise<any[]>;
+  suggestArticles(keywords: string[]): Promise<Array<{
+    id: string;
+    title: string;
+    summary: string;
+    keywords: string[];
+    published: boolean;
+  }>>;
 
   /**
-   * Busca artigo por id.
+   * Retrieves an article by id.
+   * @throws {ArticleNotFoundException} If article does not exist
    */
-  getArticle(articleId: string): Promise<any>;
+  getArticle(articleId: string): Promise<{
+    id: string;
+    title: string;
+    content: string;
+    keywords: string[];
+    categoryId?: string;
+    authorId: string;
+    status: string;
+    attachments?: string[];
+    createdAt: Date;
+    updatedAt: Date;
+    ratings: Array<{ userId: string; rating: number; comment?: string; ratedAt: Date }>;
+  }>;
 } 

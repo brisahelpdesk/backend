@@ -1,26 +1,85 @@
 export interface SlaModule {
   /**
-   * Aplica regras de SLA ao abrir um chamado.
+   * Applies SLA rules when opening a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   * @throws {ContractNotFoundException} If contract does not exist
+   * @throws {InvalidPriorityException} If priority is invalid
    */
-  applySla(ticketId: string, contractId: string, ticketType: string, priority: string): Promise<void>;
+  applySla(ticketId: string, contractId: string, ticketType: string, priority: string): Promise<{
+    appliedRule: {
+      priority: string;
+      responseTime: number;
+      resolutionTime: number;
+    };
+    deadlines: {
+      responseDeadline: Date;
+      resolutionDeadline: Date;
+    };
+  }>;
 
   /**
-   * Calcula o tempo restante para atendimento/resolução.
+   * Calculates remaining time for response/resolution.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   * @throws {SlaNotFoundException} If no SLA is applied to the ticket
    */
-  getRemainingTime(ticketId: string): Promise<{ remaining: number; unit: 'minutes' | 'hours' } | null>;
+  getRemainingTime(ticketId: string): Promise<{
+    response: {
+      remaining: number;
+      unit: 'minutes' | 'hours';
+      deadline: Date;
+    };
+    resolution: {
+      remaining: number;
+      unit: 'minutes' | 'hours';
+      deadline: Date;
+    };
+  } | null>;
 
   /**
-   * Identifica violações de SLA.
+   * Identifies SLA violations.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  checkViolation(ticketId: string): Promise<boolean>;
+  checkViolation(ticketId: string): Promise<{
+    hasViolation: boolean;
+    type?: 'RESPONSE' | 'RESOLUTION';
+    exceededBy?: {
+      time: number;
+      unit: 'minutes' | 'hours';
+    };
+  }>;
 
   /**
-   * Exibe informações de SLA do chamado.
+   * Displays ticket's SLA information.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  getSlaInfo(ticketId: string): Promise<any>;
+  getSlaInfo(ticketId: string): Promise<{
+    rule: {
+      priority: string;
+      responseTime: number;
+      resolutionTime: number;
+    };
+    deadlines: {
+      responseDeadline: Date;
+      resolutionDeadline: Date;
+    };
+    status: {
+      responseViolated: boolean;
+      resolutionViolated: boolean;
+      remainingResponse?: number;
+      remainingResolution?: number;
+    };
+  }>;
 
   /**
-   * Gera alertas ou destaques visuais para chamados críticos.
+   * Generates alerts for critical tickets.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  alertIfCritical(ticketId: string): Promise<void>;
+  alertIfCritical(ticketId: string): Promise<{
+    isCritical: boolean;
+    reason?: string;
+    remainingTime?: {
+      time: number;
+      unit: 'minutes' | 'hours';
+    };
+  }>;
 } 
