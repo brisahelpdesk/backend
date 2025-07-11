@@ -1,6 +1,8 @@
 export interface AuditModule {
   /**
-   * Registra ação crítica no sistema.
+   * Logs a critical action in the system.
+   * @throws {UserNotFoundException} If user does not exist
+   * @throws {InvalidActionTypeException} If action type is invalid
    */
   logAction(data: {
     userId: string;
@@ -9,15 +11,31 @@ export interface AuditModule {
     contextId?: string;
     timestamp?: Date;
     details?: any;
-  }): Promise<void>;
+  }): Promise<{ logged: boolean; logId: string; loggedAt: Date }>;
 
   /**
-   * Busca logs por filtro.
+   * Retrieves logs based on filters.
+   * @throws {InvalidFilterException} If filter parameters are invalid
    */
   getLogs(filter: {
     userId?: string;
     actionType?: string;
     context?: string;
     dateRange?: { from: Date; to: Date };
-  }): Promise<any[]>;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    logs: Array<{
+      id: string;
+      userId: string;
+      actionType: string;
+      context: string;
+      contextId?: string;
+      timestamp: Date;
+      details?: any;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+  }>;
 }

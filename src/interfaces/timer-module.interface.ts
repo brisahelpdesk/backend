@@ -1,31 +1,47 @@
 export interface TimerModule {
   /**
-   * Inicia temporizador para uma interação.
+   * Starts a timer for a ticket interaction.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   * @throws {UserNotFoundException} If user does not exist
    */
-  startTimer(ticketId: string, userId: string): Promise<string>; // retorna timerId
+  startTimer(ticketId: string, userId: string): Promise<{ timerId: string; startedAt: Date }>;
 
   /**
-   * Pausa temporizador.
+   * Pauses a timer.
+   * @throws {TimerNotFoundException} If timer does not exist
+   * @throws {InvalidTimerStateException} If timer cannot be paused
    */
-  pauseTimer(timerId: string): Promise<void>;
+  pauseTimer(timerId: string): Promise<{ paused: boolean; pausedAt: Date }>;
 
   /**
-   * Retoma temporizador pausado.
+   * Resumes a paused timer.
+   * @throws {TimerNotFoundException} If timer does not exist
+   * @throws {InvalidTimerStateException} If timer cannot be resumed
    */
-  resumeTimer(timerId: string): Promise<void>;
+  resumeTimer(timerId: string): Promise<{ resumed: boolean; resumedAt: Date }>;
 
   /**
-   * Finaliza temporizador.
+   * Stops a timer.
+   * @throws {TimerNotFoundException} If timer does not exist
+   * @throws {InvalidTimerStateException} If timer cannot be stopped
    */
-  stopTimer(timerId: string): Promise<void>;
+  stopTimer(timerId: string): Promise<{ stopped: boolean; stoppedAt: Date; duration: number }>;
 
   /**
-   * Exibe tempo por interação.
+   * Retrieves interaction times for a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  getInteractionTimes(ticketId: string): Promise<{ userId: string; duration: number }[]>;
+  getInteractionTimes(ticketId: string): Promise<Array<{
+    userId: string;
+    duration: number;
+    timerId: string;
+    startedAt: Date;
+    stoppedAt: Date;
+  }>>;
 
   /**
-   * Calcula tempo total por chamado.
+   * Calculates total time spent on a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
    */
-  getTotalTime(ticketId: string): Promise<number>;
+  getTotalTime(ticketId: string): Promise<{ totalDuration: number }>;
 } 

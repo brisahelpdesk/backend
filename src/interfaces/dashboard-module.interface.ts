@@ -1,6 +1,7 @@
 export interface DashboardModule {
   /**
-   * Exibe indicadores operacionais (KPIs).
+   * Retrieves operational indicators (KPIs).
+   * @throws {InvalidFilterException} If filter parameters are invalid
    */
   getKpis(filter?: {
     period?: { from: Date; to: Date };
@@ -8,15 +9,29 @@ export interface DashboardModule {
     clientId?: string;
     status?: string;
     ticketType?: string;
-  }): Promise<any>;
+  }): Promise<{
+    kpis: Array<{
+      name: string;
+      value: number;
+      unit?: string;
+    }>;
+    generatedAt: Date;
+  }>;
 
   /**
-   * Atualiza dados em tempo real.
+   * Subscribes to real-time dashboard updates.
+   * @throws {UserNotFoundException} If user does not exist
    */
   subscribeToRealtimeUpdates(userId: string, callback: (data: any) => void): void;
 
   /**
-   * Suporte a múltiplos tipos de gráfico.
+   * Retrieves chart data for different chart types.
+   * @throws {InvalidChartTypeException} If chart type is invalid
+   * @throws {InvalidFilterException} If filter parameters are invalid
    */
-  getChartData(type: 'bar' | 'line' | 'pie' | 'counter', filter?: any): Promise<any>;
+  getChartData(type: 'bar' | 'line' | 'pie' | 'counter', filter?: any): Promise<{
+    type: string;
+    data: any;
+    generatedAt: Date;
+  }>;
 } 
