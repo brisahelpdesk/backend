@@ -1,9 +1,8 @@
 export interface ChatModule {
   /**
-   * Creates a chat room for a ticket.
-   * @throws {TicketNotFoundException} If ticket does not exist
+   * Creates a chat room.
    */
-  createChatRoom(ticketId: string): Promise<{
+  createChatRoom(): Promise<{
     chatRoomId: string;
     createdAt: Date;
   }>;

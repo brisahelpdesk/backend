@@ -202,4 +202,13 @@ export interface TicketModule {
    * @throws {TicketNotFoundException} If ticket does not exist
    */
     getTotalTime(ticketId: string): Promise<{ totalDuration: number }>;
+  
+  /**
+   * Creates a chat room for a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   */
+  createChatRoom(ticketId: string): Promise<{
+    chatRoomId: string;
+    createdAt: Date;
+  }>;
 } 
