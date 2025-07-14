@@ -177,4 +177,29 @@ export interface TicketModule {
       unit: 'minutes' | 'hours';
     };
   }>;
+
+  /**
+   * Starts a timer for a ticket interaction.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   * @throws {UserNotFoundException} If user does not exist
+   */
+    startTimer(ticketId: string, userId: string): Promise<{ timerId: string; startedAt: Date }>;
+
+  /**
+   * Retrieves interaction times for a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   */
+  getInteractionTimes(ticketId: string): Promise<Array<{
+    userId: string;
+    duration: number;
+    timerId: string;
+    startedAt: Date;
+    stoppedAt: Date;
+  }>>;
+
+  /**
+   * Calculates total time spent on a ticket.
+   * @throws {TicketNotFoundException} If ticket does not exist
+   */
+    getTotalTime(ticketId: string): Promise<{ totalDuration: number }>;
 } 

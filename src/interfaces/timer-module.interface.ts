@@ -1,10 +1,8 @@
 export interface TimerModule {
   /**
-   * Starts a timer for a ticket interaction.
-   * @throws {TicketNotFoundException} If ticket does not exist
-   * @throws {UserNotFoundException} If user does not exist
+   * Starts a timer.
    */
-  startTimer(ticketId: string, userId: string): Promise<{ timerId: string; startedAt: Date }>;
+  startTimer(): Promise<{ timerId: string; startedAt: Date }>;
 
   /**
    * Pauses a timer.
@@ -26,22 +24,4 @@ export interface TimerModule {
    * @throws {InvalidTimerStateException} If timer cannot be stopped
    */
   stopTimer(timerId: string): Promise<{ stopped: boolean; stoppedAt: Date; duration: number }>;
-
-  /**
-   * Retrieves interaction times for a ticket.
-   * @throws {TicketNotFoundException} If ticket does not exist
-   */
-  getInteractionTimes(ticketId: string): Promise<Array<{
-    userId: string;
-    duration: number;
-    timerId: string;
-    startedAt: Date;
-    stoppedAt: Date;
-  }>>;
-
-  /**
-   * Calculates total time spent on a ticket.
-   * @throws {TicketNotFoundException} If ticket does not exist
-   */
-  getTotalTime(ticketId: string): Promise<{ totalDuration: number }>;
 } 
