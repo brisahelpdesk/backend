@@ -1,36 +1,57 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
+  output   = "./generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  //HARD CODED JUST FOR DEVELOPMENT
+  //postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=<schema>
+  url = "postgres://dba:dba@localhost:5432/brisa-helpdesk?schema=sc_helpdesk"
 }
 
-model User {
-  id       BigInt @id @default(autoincrement())
-  uuid     String @unique @default(uuid(4))
-  email    String @unique
-  password String
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tb_catalog_item {
+  id                   BigInt               @id(map: "pk_tb_catalog_item_id") @default(autoincrement())
+  uuid                 String               @unique(map: "uq_tb_catalog_item_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  catalog_item_type_id BigInt
+  internal_code        String?              @unique(map: "uq_tb_catalog_item_internal_code") @db.VarChar(255)
+  name                 String               @db.VarChar(255)
+  is_active            Boolean              @default(true)
+  description          String?              @db.VarChar(255)
+  created_at           DateTime             @db.Timestamptz(6)
+  updated_at           DateTime             @db.Timestamptz(6)
+  tb_catalog_item_type tb_catalog_item_type @relation(fields: [catalog_item_type_id], references: [id], onUpdate: NoAction, map: "fk_tb_catalog_item_tb_catalog_item_type_catalog_item_type_id")
+  tb_product           tb_product?
+  tb_service           tb_service?
 
-  client Client?
-
-  @@map("tb_user")
+  @@index([catalog_item_type_id], map: "ix_tb_catalog_item_catalog_item_type_id")
 }
 
-model Client {
-  id     BigInt @id
-  uuid   String @unique @default(uuid(4))
-  tax_id String @unique
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tb_catalog_item_type {
+  id              BigInt            @id(map: "pk_tb_catalog_item_type_id") @default(autoincrement())
+  uuid            String            @unique(map: "uq_tb_catalog_item_type_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @unique(map: "uq_tb_catalog_item_type_name") @db.VarChar(50)
+  description     String?           @db.VarChar(255)
+  created_at      DateTime          @db.Timestamptz(6)
+  updated_at      DateTime          @db.Timestamptz(6)
+  tb_catalog_item tb_catalog_item[]
+}
 
-  user User @relation(fields: [id], references: [id])
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tb_product {
+  catalog_item_id     BigInt          @id(map: "pk_tb_product_catalog_item_id")
+  uuid                String          @unique(map: "uq_tb_product_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  is_physical_product Boolean
+  tb_catalog_item     tb_catalog_item @relation(fields: [catalog_item_id], references: [id], onUpdate: NoAction, map: "fk_tb_product_tb_catalog_item_catalog_item_id")
+}
 
-  @@map("tb_client")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tb_service {
+  catalog_item_id     BigInt          @id(map: "pk_tb_service_catalog_item_id")
+  uuid                String          @unique(map: "uq_tb_service_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  is_physical_service Boolean
+  tb_catalog_item     tb_catalog_item @relation(fields: [catalog_item_id], references: [id], onUpdate: NoAction, map: "fk_tb_service_tb_catalog_item_catalog_item_id")
 }

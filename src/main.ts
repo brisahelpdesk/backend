@@ -7,6 +7,7 @@ declare const module: any; //HMR related config
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
+    //Swagger related config
     const config = new DocumentBuilder()
         .setTitle('BRISA Helpdesk')
         .setDescription('BRISA Helpdesk backend API')
@@ -16,6 +17,7 @@ async function bootstrap() {
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('swagger/api', app, documentFactory);
 
+    //Running app
     await app.listen(process.env.PORT ?? 3000);
 
     //HMR related config
@@ -25,4 +27,5 @@ async function bootstrap() {
     }
 }
 
-bootstrap();
+bootstrap()
+    .catch(error => error);
