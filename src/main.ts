@@ -17,7 +17,7 @@ async function bootstrap() {
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('swagger/api', app, documentFactory);
 
-    //Running app
+    //Configuring app port
     await app.listen(process.env.PORT ?? 3000);
 
     //HMR related config
@@ -27,5 +27,6 @@ async function bootstrap() {
     }
 }
 
+// Running app
 bootstrap()
     .catch(error => error);
