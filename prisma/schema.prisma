@@ -12,6 +12,17 @@ datasource db {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tb_catalog_item_type {
+  id              BigInt            @id(map: "pk_tb_catalog_item_type_id") @default(autoincrement())
+  uuid            String            @unique(map: "uq_tb_catalog_item_type_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @unique(map: "uq_tb_catalog_item_type_name") @db.VarChar(50)
+  description     String?           @db.VarChar(255)
+  created_at      DateTime          @db.Timestamptz(6)
+  updated_at      DateTime          @db.Timestamptz(6)
+  tb_catalog_item tb_catalog_item[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tb_catalog_item {
   id                   BigInt               @id(map: "pk_tb_catalog_item_id") @default(autoincrement())
   uuid                 String               @unique(map: "uq_tb_catalog_item_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -27,17 +38,6 @@ model tb_catalog_item {
   tb_service           tb_service?
 
   @@index([catalog_item_type_id], map: "ix_tb_catalog_item_catalog_item_type_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model tb_catalog_item_type {
-  id              BigInt            @id(map: "pk_tb_catalog_item_type_id") @default(autoincrement())
-  uuid            String            @unique(map: "uq_tb_catalog_item_type_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name            String            @unique(map: "uq_tb_catalog_item_type_name") @db.VarChar(50)
-  description     String?           @db.VarChar(255)
-  created_at      DateTime          @db.Timestamptz(6)
-  updated_at      DateTime          @db.Timestamptz(6)
-  tb_catalog_item tb_catalog_item[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

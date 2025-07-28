@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ProductRepository } from './product.repository';
+import { ProductResponseDto } from './dto/product-response.dto';
 
 @Injectable()
 export class ProductService {
@@ -9,7 +10,7 @@ export class ProductService {
     return this.productRepository.create(data);
   }
 
-  async findAll(): Promise<any[]> {
+  async findAll(): Promise<ProductResponseDto[]> {
     return this.productRepository.findAll();
   }
 
