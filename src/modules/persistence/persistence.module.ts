@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PersistenceService } from './persistence.service';
 
 @Module({
-  providers: [PersistenceService]
+  providers: [PersistenceService],
+  exports: [PersistenceService]
 })
 export class PersistenceModule {}
