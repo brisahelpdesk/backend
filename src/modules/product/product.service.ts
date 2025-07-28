@@ -1,32 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { PersistenceService } from '../persistence/persistence.service';
+import { ProductRepository } from './product.repository';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly persistence: PersistenceService) {}
+  constructor(private readonly productRepository: ProductRepository) {}
 
   async create(data: any): Promise<any> {
-    // TODO: Implementar lógica de criação
-    return {};
+    return this.productRepository.create(data);
   }
 
   async findAll(): Promise<any[]> {
-    // TODO: Implementar lógica de listagem
-    return [];
+    return this.productRepository.findAll();
   }
 
   async findOne(id: string): Promise<any> {
-    // TODO: Implementar lógica de busca por id
-    return {};
+    return this.productRepository.findOne(id);
   }
 
   async update(id: string, data: any): Promise<any> {
-    // TODO: Implementar lógica de atualização
-    return {};
+    return this.productRepository.update(id, data);
   }
 
   async delete(id: string): Promise<any> {
-    // TODO: Implementar lógica de remoção
-    return {};
+    return this.productRepository.delete(id);
   }
 } 
