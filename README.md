@@ -28,3 +28,8 @@ For more information on the project stack take a look at our [documentation](htt
 ### Git Branching Model
 
 We adopted [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) as our git branching model.
+
+## Running Project
+
+1. Get the project database running `docker compose up -d`
+2. Generate Prisma Client `npx prisma generate`
