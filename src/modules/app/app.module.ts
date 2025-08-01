@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from '../product/product.module';
 import { UserModule } from '../user/user.module';
+import { ClientModule } from '../client/client.module';
 
 @Module({
     imports: [
@@ -11,6 +12,7 @@ import { UserModule } from '../user/user.module';
         ConfigModule.forRoot(),
         ProductModule,
         UserModule,
+        ClientModule
     ],
     controllers: [AppController],
     providers: [AppService],
