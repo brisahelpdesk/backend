@@ -5,10 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
-  //HARD CODED JUST FOR DEVELOPMENT
-  //postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=<schema>
-  url = "postgres://dba:dba@localhost:5432/brisa-helpdesk?schema=sc_helpdesk"
+  url      = "postgres://dba:dba@localhost:5432/brisa-helpdesk?schema=sc_helpdesk"
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -54,4 +51,283 @@ model tb_service {
   uuid                String          @unique(map: "uq_tb_service_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   is_physical_service Boolean
   tb_catalog_item     tb_catalog_item @relation(fields: [catalog_item_id], references: [id], onUpdate: NoAction, map: "fk_tb_service_tb_catalog_item_catalog_item_id")
+}
+
+model tb_branch {
+  id          Int           @id(map: "pk_tb_branch_id") @default(autoincrement())
+  uuid        String        @unique(map: "uq_tb_branch_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String        @unique(map: "uq_tb_branch_name") @db.VarChar(100)
+  created_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_employee tb_employee[]
+}
+
+model tb_client {
+  id                   Int                   @id(map: "pk_tb_client_id") @default(autoincrement())
+  uuid                 String                @unique(map: "uq_tb_client_client_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  client_type_id       Int
+  client_status_id     Int
+  client_since         DateTime?             @db.Date
+  created_at           DateTime              @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at           DateTime              @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  contact_email        String                @db.VarChar(50)
+  tb_client_status     tb_client_status      @relation(fields: [client_status_id], references: [id], onUpdate: Restrict, map: "fk_tb_client_client_status_client_status_id")
+  tb_client_type       tb_client_type        @relation(fields: [client_type_id], references: [id], onUpdate: Restrict, map: "fk_tb_client_tb_client_type_client_type_id")
+  tb_client_company    tb_client_company?
+  tb_client_individual tb_client_individual?
+}
+
+model tb_client_company {
+  id              Int             @id(map: "pk_tb_client_company_id")
+  company_tax_id  String          @unique(map: "uq_tb_client_company_company_tax_id") @db.VarChar(14)
+  company_size_id Int
+  legal_name      String          @db.VarChar(255)
+  trade_name      String          @db.VarChar(255)
+  created_at      DateTime        @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at      DateTime        @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_client       tb_client       @relation(fields: [id], references: [id], onUpdate: Restrict, map: "fk_tb_client_company_tb_client_id")
+  tb_company_size tb_company_size @relation(fields: [company_size_id], references: [id], onUpdate: Restrict, map: "fk_tb_client_company_tb_company_size_company_size")
+  tb_requester    tb_requester[]
+}
+
+model tb_client_individual {
+  id                Int       @id(map: "pk_tb_client_individual_id")
+  individual_tax_id String    @unique(map: "uq_tb_client_individual_individual_tax_id") @db.VarChar(11)
+  user_id           Int?      @unique(map: "uq_tb_client_individual_user_id")
+  first_name        String    @db.VarChar(100)
+  last_name         String    @db.VarChar(100)
+  birthdate         DateTime  @db.Date
+  created_at        DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at        DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_client         tb_client @relation(fields: [id], references: [id], onUpdate: Restrict, map: "fk_tb_client_individual_tb_client_id")
+  tb_user           tb_user?  @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_tb_client_individual_tb_user_user_id")
+}
+
+model tb_client_status {
+  id          Int         @id(map: "pk_tb_client_status_id") @default(autoincrement())
+  uuid        String      @unique(map: "uq_tb_client_status_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status      String      @unique(map: "uq_tb_client_status_name") @db.VarChar(50)
+  description String?     @db.VarChar(255)
+  created_at  DateTime    @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime    @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_client   tb_client[]
+}
+
+model tb_client_type {
+  id          Int         @id(map: "pk_tb_client_type_id") @default(autoincrement())
+  uuid        String      @unique(map: "uq_tb_client_type_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type        String      @unique(map: "uq_tb_client_type_name") @db.VarChar(50)
+  description String?     @db.VarChar(255)
+  created_at  DateTime    @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime    @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_client   tb_client[]
+}
+
+model tb_company_size {
+  id                Int                 @id(map: "pk_tb_company_size_id") @default(autoincrement())
+  uuid              String              @unique(map: "uq_tb_company_size_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  size              String              @unique(map: "uq_tb_company_size_name") @db.VarChar(50)
+  description       String?             @db.VarChar(255)
+  created_at        DateTime            @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at        DateTime            @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_client_company tb_client_company[]
+}
+
+model tb_department {
+  id          Int           @id(map: "pk_tb_departament_id") @default(autoincrement())
+  uuid        String        @unique(map: "uq_tb_department_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String        @unique(map: "uq_tb_department_name") @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  created_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_employee tb_employee[]
+}
+
+model tb_employee {
+  id                 Int                @id(map: "pk_tb_employee_id") @default(autoincrement())
+  uuid               String             @unique(map: "uq_tb_employee_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  individual_tax_id  String             @unique(map: "uq_tb_employee_individual_tax_id") @db.VarChar(11)
+  internal_code      String?            @unique(map: "uq_tb_employee_employee_code") @db.VarChar(10)
+  user_id            Int?               @unique(map: "uq_tb_employee_user_id")
+  supervisor_id      Int?
+  department_id      Int?
+  job_position_id    Int
+  branch_id          Int
+  employee_status_id Int
+  first_name         String             @db.VarChar(100)
+  last_name          String             @db.VarChar(100)
+  is_active          Boolean            @default(true)
+  created_at         DateTime           @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at         DateTime           @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  hired_at           DateTime           @db.Date
+  dimissed_at        DateTime?          @db.Date
+  contact_email      String             @db.VarChar(50)
+  extension_number   String?            @db.VarChar(10)
+  tb_branch          tb_branch          @relation(fields: [branch_id], references: [id], onUpdate: Restrict, map: "fk_tb_employee_tb_branch_branch_id")
+  tb_department      tb_department?     @relation(fields: [department_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_tb_employee_tb_department_department_id")
+  tb_employee_status tb_employee_status @relation(fields: [employee_status_id], references: [id], onUpdate: Restrict, map: "fk_tb_employee_tb_employee_status_employee_status_id")
+  tb_employee        tb_employee?       @relation("tb_employeeTotb_employee", fields: [supervisor_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_tb_employee_tb_employee_supervisor_id")
+  other_tb_employee  tb_employee[]      @relation("tb_employeeTotb_employee")
+  tb_job_position    tb_job_position    @relation(fields: [job_position_id], references: [id], onUpdate: Restrict, map: "fk_tb_employee_tb_job_position_job_position_id")
+  tb_user            tb_user?           @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_tb_employee_tb_user_user_id")
+}
+
+model tb_employee_status {
+  id          Int           @id(map: "tb_employee_status_id") @default(autoincrement())
+  uuid        String        @unique(map: "uq_tb_employee_status_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status      String        @unique(map: "uq_tb_employee_status_status") @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  created_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_employee tb_employee[]
+}
+
+model tb_job_position {
+  id          Int           @id(map: "pk_tb_job_position_id") @default(autoincrement())
+  uuid        String        @unique(map: "uq_tb_job_position_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String        @unique(map: "uq_tb_job_position_title") @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  created_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at  DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_employee tb_employee[]
+}
+
+model tb_oauth_provider {
+  id                     Int                      @id(map: "pk_tb_oauth_provider_id") @default(autoincrement())
+  uuid                   String                   @unique(map: "uq_tb_oauth_provider_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String                   @unique(map: "uq_tb_oauth_provider_name") @db.VarChar(50)
+  display_name           String                   @db.VarChar(100)
+  authorization_endpoint String                   @db.VarChar(255)
+  token_endpoint         String                   @db.VarChar(255)
+  userinfo_endpoint      String                   @db.VarChar(255)
+  client_id              String                   @db.VarChar(255)
+  client_secret          String                   @db.VarChar(255)
+  scopes                 String                   @default("openid email profile") @db.VarChar(255)
+  is_active              Boolean                  @default(true)
+  created_at             DateTime                 @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_user_oauth_provider tb_user_oauth_provider[]
+}
+
+model tb_permission {
+  id                 Int                  @id(map: "pk_tb_permission_id") @default(autoincrement())
+  uuid               String               @unique(map: "uq_tb_permission_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @unique(map: "uq_tb_permission_name") @db.VarChar(50)
+  description        String?              @db.VarChar(255)
+  created_at         DateTime             @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at         DateTime             @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_role_permission tb_role_permission[]
+}
+
+model tb_requester {
+  id                Int               @id(map: "pk_tb_requester_id") @default(autoincrement())
+  uuid              String            @unique(map: "uq_tb_requester_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  individual_tax_id String            @unique(map: "uq_tb_requester_individual_tax_id") @db.VarChar(11)
+  client_company_id Int
+  user_id           Int?              @unique(map: "uq_tb_requester_user_id")
+  first_name        String            @db.VarChar(100)
+  last_name         String            @db.VarChar(100)
+  job_position      String?           @db.VarChar(30)
+  department        String?           @db.VarChar(30)
+  is_active         Boolean           @default(true)
+  created_at        DateTime          @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at        DateTime          @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  contact_email     String            @db.VarChar(50)
+  tb_client_company tb_client_company @relation(fields: [client_company_id], references: [id], onUpdate: Restrict, map: "fk_tb_requester_client_company_id")
+  tb_user           tb_user?          @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_tb_requester_tb_user_user_id")
+}
+
+model tb_role {
+  id                 Int                  @id(map: "pk_tb_role_id") @default(autoincrement())
+  uuid               String               @unique(map: "uq_tb_role_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @unique(map: "uq_tb_role_name") @db.VarChar(100)
+  description        String?              @db.VarChar(255)
+  is_active          Boolean              @default(true)
+  created_at         DateTime             @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at         DateTime             @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_role_permission tb_role_permission[]
+  tb_user_role       tb_user_role[]
+}
+
+model tb_role_permission {
+  role_id       Int
+  permission_id Int
+  created_at    DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at    DateTime      @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_permission tb_permission @relation(fields: [permission_id], references: [id], onUpdate: Restrict, map: "fk_tb_role_permission_permission_id")
+  tb_role       tb_role       @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "fk_tb_role_permission_role_id")
+
+  @@id([role_id, permission_id], map: "pk_tb_role_permission_role_id_permission_id")
+}
+
+model tb_security_question {
+  id            Int       @id(map: "pk_tb_security_question_id") @default(autoincrement())
+  uuid          String    @unique(map: "uq_tb_security_question_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  question_text String    @unique(map: "uq_tb_security_question_question_text") @db.VarChar(255)
+  created_at    DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at    DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_user       tb_user[]
+}
+
+model tb_user {
+  id                     Int                      @id(map: "pk_tb_user_id") @default(autoincrement())
+  uuid                   String                   @unique(map: "uq_tb_user_user_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                  String                   @unique(map: "uq_tb_user_email") @db.VarChar(50)
+  user_type_id           Int
+  security_question_id   Int
+  security_answer        String?
+  password               String                   @db.VarChar(255)
+  is_active              Boolean                  @default(false)
+  created_at             DateTime                 @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at             DateTime                 @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  is_email_verified      Boolean                  @default(false)
+  is_password_changed    Boolean                  @default(false)
+  is_temp_pwd_active     Boolean                  @default(true)
+  tb_client_individual   tb_client_individual?
+  tb_employee            tb_employee?
+  tb_requester           tb_requester?
+  tb_security_question   tb_security_question     @relation(fields: [security_question_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_tb_security_question_security_question_id")
+  tb_user_type           tb_user_type             @relation(fields: [user_type_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_type_tb_user_user_type_id")
+  tb_user_oauth_provider tb_user_oauth_provider[]
+  tb_user_role           tb_user_role[]
+}
+
+model tb_user_oauth_provider {
+  id                Int               @id(map: "pk_tb_user_oauth_provider_id") @default(autoincrement())
+  user_id           Int
+  provider_id       Int
+  external_user_id  String            @db.VarChar(255)
+  is_verified       Boolean?          @default(false)
+  is_revoked        Boolean?          @default(false)
+  revoked_at        DateTime?         @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  last_login_at     DateTime?         @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  scopes            String?           @db.VarChar(255)
+  created_at        DateTime          @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at        DateTime          @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_oauth_provider tb_oauth_provider @relation(fields: [provider_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_oauth_provider_provider_id")
+  tb_user           tb_user           @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_oauth_provider_user_id")
+
+  @@unique([provider_id, external_user_id], map: "uq_tb_user_oauth_provider_user")
+  @@unique([user_id, provider_id], map: "uq_tb_user_oauth_user_provider")
+}
+
+model tb_user_role {
+  user_id    Int
+  role_id    Int
+  created_at DateTime @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at DateTime @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_role    tb_role  @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_role_role_id")
+  tb_user    tb_user  @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "fk_tb_user_role_user_id")
+
+  @@id([user_id, role_id], map: "pk_tb_user_role_user_id_role_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_user_type {
+  id         Int       @id(map: "pk_tb_user_type_id") @default(autoincrement())
+  uuid       String    @unique(map: "uq_tb_user_type_uuid") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type       String    @unique(map: "uq_tb_user_type_type") @db.VarChar(20)
+  created_at DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  updated_at DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
+  tb_user    tb_user[]
 }

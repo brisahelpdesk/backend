@@ -24,4 +24,4 @@
 //   async delete(id: string): Promise<any> {
 //     return this.serviceRepository.delete(id);
 //   }
-// } 
+// }

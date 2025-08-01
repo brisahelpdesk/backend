@@ -28,5 +28,4 @@ async function bootstrap() {
 }
 
 // Running app
-bootstrap()
-    .catch(error => error);
+bootstrap().catch((error) => error);
