@@ -29,4 +29,4 @@
 //   async delete(@Param('id') id: string) {
 //     return this.serviceService.delete(id);
 //   }
-// } 
+// }

@@ -5,8 +5,8 @@ import { PersistenceModule } from '../persistence/persistence.module';
 import { ProductRepository } from './product.repository';
 
 @Module({
-  imports: [PersistenceModule],
-  controllers: [ProductController],
-  providers: [ProductService, ProductRepository],
+    imports: [PersistenceModule],
+    controllers: [ProductController],
+    providers: [ProductService, ProductRepository],
 })
-export class ProductModule {} 
+export class ProductModule {}

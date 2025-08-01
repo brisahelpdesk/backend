@@ -9,4 +9,4 @@
 //   controllers: [ServiceController],
 //   providers: [ServiceService, ServiceRepository],
 // })
-// export class ServiceModule {} 
+// export class ServiceModule {}
