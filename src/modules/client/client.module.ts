@@ -3,9 +3,10 @@ import { ClientController } from './client.controller';
 import { ClientService } from './client.service';
 import { PersistenceModule } from '../persistence/persistence.module';
 import { ClientRepository } from './client.repository';
+import { EmailService } from '../email/email.service';
 
 @Module({
-  imports: [PersistenceModule],
+  imports: [PersistenceModule, EmailService],
   controllers: [ClientController],
   providers: [ClientService, ClientRepository],
   exports: [ClientService], // Export the service so other modules can use it

@@ -1,17 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ClientRepository } from './client.repository';
 import { CreateIndividualClientDto } from './dto/create-individual-client.dto';
 import { CreateCompanyClientDto } from './dto/create-company-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { ClientResponseDto } from './dto/client-response.dto';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly clientRepository: ClientRepository) {}
+  private readonly logger = new Logger(ClientService.name);
+
+  constructor(
+    private readonly clientRepository: ClientRepository,
+    private readonly emailService: EmailService,
+  ) {}
 
   // Individual Client Operations
   async createIndividualClient(data: CreateIndividualClientDto): Promise<ClientResponseDto> {
-    return this.clientRepository.createIndividualClient(data);
+    const client = await this.clientRepository.createIndividualClient(data);
+
+    if (data.user_id) {
+        try {
+            // Get client name for email
+            const clientName = `${data.first_name} ${data.last_name}`;
+
+            await this.emailService.sendPasswordResetEmail(
+              data.contact_email,
+              'TOKEN',
+              'FRONTEND URL',
+            );
+
+            this.logger.log(`Password reset email sent to ${data.contact_email} for individual client`);
+          } catch (error) {
+            this.logger.error(`Failed to send password reset email to ${data.contact_email}:`, error);
+            // Don't throw error here to avoid breaking the client creation
+          }
+    }
+      return client;
   }
 
   async updateIndividualClient(uuid: string, data: UpdateClientDto): Promise<ClientResponseDto> {
