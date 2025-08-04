@@ -322,6 +322,7 @@ model tb_user_role {
   @@id([user_id, role_id], map: "pk_tb_user_role_user_id_role_id")
 }
 
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model tb_user_type {
   id         Int       @id(map: "pk_tb_user_type_id") @default(autoincrement())
@@ -330,4 +331,16 @@ model tb_user_type {
   created_at DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
   updated_at DateTime  @default(dbgenerated("date_trunc('second'::text, now())")) @db.Timestamptz(6)
   tb_user    tb_user[]
+}
+
+model tb_timer {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  started_at   DateTime
+  paused_at    DateTime?
+  resumed_at   DateTime?
+  stopped_at   DateTime?
+  duration     Int?
+  total_paused Int?     @default(0)
+  state        String   @db.VarChar(20)
 }

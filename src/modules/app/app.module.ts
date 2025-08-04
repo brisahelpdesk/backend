@@ -6,6 +6,7 @@ import { ProductModule } from '../product/product.module';
 import { UserModule } from '../user/user.module';
 import { ClientModule } from '../client/client.module';
 import { EmployeeModule } from '../employee/employee.module';
+import { TimerModule } from '../timer/timer.module';
 
 @Module({
     imports: [
@@ -14,7 +15,8 @@ import { EmployeeModule } from '../employee/employee.module';
         ProductModule,
         UserModule,
         ClientModule,
-        EmployeeModule
+        EmployeeModule,
+        TimerModule
     ],
     controllers: [AppController],
     providers: [AppService],
