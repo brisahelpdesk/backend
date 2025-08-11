@@ -5,10 +5,12 @@ import { Expose } from "class-transformer";
 export class TimerResponseDto {
   @ApiProperty({ description: 'Unique identifier for the timer' })
   @IsNumber()
+  @Expose()
   id: number;
 
   @ApiProperty({ description: 'User ID associated with the timer' })
   @IsNumber()
+  @Expose()
   user_id: number;
 
   @ApiProperty({ description: 'Start time of the timer' })
@@ -32,15 +34,18 @@ export class TimerResponseDto {
 
   @ApiProperty({ description: 'Total duration of the timer in seconds' })
   @IsNumber()
+  @Expose()
   @IsOptional()
   duration?: number;
 
   @ApiProperty({ description: 'Total time paused in seconds' })
   @IsNumber()
+  @Expose()
   @IsOptional()
   total_paused?: number;
 
   @ApiProperty({ description: 'Current state of the timer' })
   @IsString()
+  @Expose()
   state: 'running' | 'paused' | 'stopped';
 }
