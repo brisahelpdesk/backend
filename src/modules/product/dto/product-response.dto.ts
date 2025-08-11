@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ProductResponseDto {
     // tb_product fields
-    @ApiProperty({ description: 'Product UUID' })
+    @ApiProperty({ description: 'ProductEntity UUID' })
     @Expose()
     uuid: string;
 
@@ -27,7 +27,7 @@ export class ProductResponseDto {
     @Expose()
     internal_code?: string;
 
-    @ApiProperty({ description: 'Product name' })
+    @ApiProperty({ description: 'ProductEntity name' })
     @Expose()
     name: string;
 
@@ -35,7 +35,7 @@ export class ProductResponseDto {
     @Expose()
     is_active: boolean;
 
-    @ApiProperty({ description: 'Product description', required: false })
+    @ApiProperty({ description: 'ProductEntity description', required: false })
     @Expose()
     description?: string;
 

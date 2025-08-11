@@ -35,7 +35,7 @@ export class ProductController {
     @ApiBody({ type: CreateProductDto })
     @ApiResponse({
         status: 201,
-        description: 'Product successfully created',
+        description: 'ProductEntity successfully created',
         type: ProductResponseDto,
     })
     async create(@Body() data: CreateProductDto): Promise<ProductResponseDto> {
@@ -59,38 +59,38 @@ export class ProductController {
 
     /**
      * Retrieves a product by its UUID.
-     * @param id Product UUID
+     * @param id ProductEntity UUID
      * @returns The found product
      */
     @Get(':id')
     @ApiOperation({ summary: 'Get a product by UUID' })
-    @ApiParam({ name: 'id', description: 'Product UUID' })
+    @ApiParam({ name: 'id', description: 'ProductEntity UUID' })
     @ApiResponse({
         status: 200,
-        description: 'Product found',
+        description: 'ProductEntity found',
         type: ProductResponseDto,
     })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiResponse({ status: 404, description: 'ProductEntity not found' })
     async findOne(@Param('id') id: string): Promise<ProductResponseDto> {
         return this.productService.findOne(id);
     }
 
     /**
      * Updates an existing product.
-     * @param id Product UUID
+     * @param id ProductEntity UUID
      * @param data Data for update
      * @returns The updated product
      */
     @Patch(':id')
     @ApiOperation({ summary: 'Update an existing product' })
-    @ApiParam({ name: 'id', description: 'Product UUID' })
+    @ApiParam({ name: 'id', description: 'ProductEntity UUID' })
     @ApiBody({ type: UpdateProductDto })
     @ApiResponse({
         status: 200,
-        description: 'Product updated',
+        description: 'ProductEntity updated',
         type: ProductResponseDto,
     })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiResponse({ status: 404, description: 'ProductEntity not found' })
     async update(
         @Param('id') id: string,
         @Body() data: UpdateProductDto,
@@ -100,14 +100,14 @@ export class ProductController {
 
     /**
      * Removes a product by its UUID.
-     * @param id Product UUID
+     * @param id ProductEntity UUID
      */
     @Delete(':id')
     @HttpCode(204)
     @ApiOperation({ summary: 'Remove a product by UUID' })
-    @ApiParam({ name: 'id', description: 'Product UUID' })
-    @ApiResponse({ status: 204, description: 'Product successfully removed' })
-    @ApiResponse({ status: 404, description: 'Product not found' })
+    @ApiParam({ name: 'id', description: 'ProductEntity UUID' })
+    @ApiResponse({ status: 204, description: 'ProductEntity successfully removed' })
+    @ApiResponse({ status: 404, description: 'ProductEntity not found' })
     async delete(@Param('id') id: string): Promise<void> {
         return this.productService.delete(id);
     }

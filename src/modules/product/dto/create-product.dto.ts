@@ -11,7 +11,7 @@ export class CreateProductDto {
     @IsString()
     internal_code?: string;
 
-    @ApiProperty({ description: 'Product name' })
+    @ApiProperty({ description: 'ProductEntity name' })
     @IsString()
     name: string;
 
@@ -20,7 +20,7 @@ export class CreateProductDto {
     @IsBoolean()
     is_active?: boolean;
 
-    @ApiPropertyOptional({ description: 'Product description' })
+    @ApiPropertyOptional({ description: 'ProductEntity description' })
     @IsOptional()
     @IsString()
     description?: string;

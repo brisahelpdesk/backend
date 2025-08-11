@@ -51,7 +51,7 @@ export class ProductRepository {
             where: { uuid },
             include: { tb_catalog_item: true },
         });
-        if (!product) throw new NotFoundException('Product not found');
+        if (!product) throw new NotFoundException('ProductEntity not found');
         return plainToInstance(ProductResponseDto, product, {
             excludeExtraneousValues: true,
         });
@@ -64,7 +64,7 @@ export class ProductRepository {
         const product = await this.persistence.tb_product.findUnique({
             where: { uuid },
         });
-        if (!product) throw new NotFoundException('Product not found');
+        if (!product) throw new NotFoundException('ProductEntity not found');
         const updated = await this.persistence.tb_product.update({
             where: { uuid },
             data: {
@@ -106,7 +106,7 @@ export class ProductRepository {
         try {
             await this.persistence.tb_product.delete({ where: { uuid } });
         } catch (e) {
-            throw new NotFoundException('Product not found');
+            throw new NotFoundException('ProductEntity not found');
         }
     }
 }

@@ -12,7 +12,7 @@ export class UpdateProductDto {
     @IsString()
     internal_code?: string;
 
-    @ApiPropertyOptional({ description: 'Product name' })
+    @ApiPropertyOptional({ description: 'ProductEntity name' })
     @IsOptional()
     @IsString()
     name?: string;
@@ -22,7 +22,7 @@ export class UpdateProductDto {
     @IsBoolean()
     is_active?: boolean;
 
-    @ApiPropertyOptional({ description: 'Product description' })
+    @ApiPropertyOptional({ description: 'ProductEntity description' })
     @IsOptional()
     @IsString()
     description?: string;
