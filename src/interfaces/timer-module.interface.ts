@@ -1,15 +1,17 @@
+import { TimerResponseDto } from "src/modules/timer/dto/timer-response.dto";
+
 export interface TimerModule {
     /**
      * Starts a timer.
      */
-    startTimer(): Promise<{ timerId: string; startedAt: Date }>;
+    startTimer(): Promise<TimerResponseDto>;
 
     /**
      * Pauses a timer.
      * @throws {TimerNotFoundException} If timer does not exist
      * @throws {InvalidTimerStateException} If timer cannot be paused
      */
-    pauseTimer(timerId: string): Promise<{ paused: boolean; pausedAt: Date }>;
+    pauseTimer(timerId: string): Promise<TimerResponseDto>;
 
     /**
      * Resumes a paused timer.
@@ -18,7 +20,7 @@ export interface TimerModule {
      */
     resumeTimer(
         timerId: string,
-    ): Promise<{ resumed: boolean; resumedAt: Date }>;
+    ): Promise<TimerResponseDto>;
 
     /**
      * Stops a timer.
@@ -27,5 +29,5 @@ export interface TimerModule {
      */
     stopTimer(
         timerId: string,
-    ): Promise<{ stopped: boolean; stoppedAt: Date; duration: number }>;
+    ): Promise<TimerResponseDto>;
 }

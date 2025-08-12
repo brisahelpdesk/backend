@@ -1,23 +1,21 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { TimerModule as ITimerModule } from '../../interfaces/timer-module.interface';
 import { TimerRepository } from './timer.repository';
+import { TimerResponseDto } from './dto/timer-response.dto';
 
 @Injectable()
 export class TimerService implements ITimerModule {
   constructor(private readonly timerRepository: TimerRepository) {}
 
-  async startTimer(): Promise<{ timerId: string; startedAt: Date }> {
+  async startTimer(): Promise<TimerResponseDto> {
     const started_at = new Date();
     // TODO: Utilizar o ID do usuário autenticado
     const timer = await this.timerRepository.create({ user_id: 1, started_at });
 
-    return {
-      timerId: timer.id.toString(),
-      startedAt: timer.started_at,
-    };
+    return timer;
   }
 
-  async pauseTimer(timerId: string): Promise<{ paused: boolean; pausedAt: Date }> {
+  async pauseTimer(timerId: string): Promise<TimerResponseDto> {
     const id = Number(timerId);
     const timer = await this.timerRepository.findById(id);
     if (timer.state !== 'running') {
@@ -25,15 +23,12 @@ export class TimerService implements ITimerModule {
     }
 
     const paused_at = new Date();
-    await this.timerRepository.update(id, { paused_at, state: 'paused' });
+    const TimerPaused = await this.timerRepository.update(id, { paused_at, state: 'paused' });
 
-    return {
-      paused: true,
-      pausedAt: paused_at,
-    };
+    return TimerPaused;
   }
 
-  async resumeTimer(timerId: string): Promise<{ resumed: boolean; resumedAt: Date }> {
+  async resumeTimer(timerId: string): Promise<TimerResponseDto> {
     const id = Number(timerId);
     const timer = await this.timerRepository.findById(id);
     if (timer.state !== 'paused') {
@@ -43,17 +38,14 @@ export class TimerService implements ITimerModule {
     const resumed_at = new Date();
     let total_paused = timer.total_paused || 0;
     if (timer.paused_at) {
-      total_paused += resumed_at.getTime() - new Date(timer.paused_at).getTime();
+      total_paused += Math.floor((resumed_at.getTime() - new Date(timer.paused_at).getTime()) / 1000);
     }
-    await this.timerRepository.update(id, { resumed_at, state: 'running', total_paused });
+    const timerResumed = await this.timerRepository.update(id, { resumed_at, state: 'running', total_paused });
 
-    return {
-      resumed: true,
-      resumedAt: resumed_at,
-    };
+    return timerResumed;
   }
 
-  async stopTimer(timerId: string): Promise<{ stopped: boolean; stoppedAt: Date; duration: number }> {
+  async stopTimer(timerId: string): Promise<TimerResponseDto> {
     const id = Number(timerId);
     const timer = await this.timerRepository.findById(id);
     if (timer.state === 'stopped') {
@@ -63,15 +55,11 @@ export class TimerService implements ITimerModule {
     const stopped_at = new Date();
     let total_paused = timer.total_paused || 0;
     if (timer.state === 'paused' && timer.paused_at) {
-      total_paused += stopped_at.getTime() - new Date(timer.paused_at).getTime();
+      total_paused += Math.floor((stopped_at.getTime() - new Date(timer.paused_at).getTime()) / 1000);
     }
-    const duration = stopped_at.getTime() - new Date(timer.started_at).getTime() - total_paused;
-    await this.timerRepository.update(id, { stopped_at, state: 'stopped', duration, total_paused });
+    const duration = Math.floor((stopped_at.getTime() - new Date(timer.started_at).getTime()) / 1000) - total_paused;
+    const timerStoped = await this.timerRepository.update(id, { stopped_at, state: 'stopped', duration, total_paused });
 
-    return {
-      stopped: true,
-      stoppedAt: stopped_at,
-      duration,
-    };
+    return timerStoped;
   }
 }
