@@ -9,11 +9,10 @@ export class ProductPrismaMapper {
             raw.internal_code ?? '',
             raw.name,
             raw.is_physical,
-
             raw.is_active,
             raw.created_at,
-            raw.updated_at
-        raw.description ?? '',
+            raw.updated_at,
+            raw.description ?? '',
         );
    }
 }

@@ -8,9 +8,9 @@ services:
     ports: 
     - "5432:5432"
     environment:
-      - POSTGRES_DB=brisa-helpdesk
-      - POSTGRES_USER=dba
-      - POSTGRES_PASSWORD=dba
+      - POSTGRES_DB=helpdesk
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
 
 volumes:
   database:
