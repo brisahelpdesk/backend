@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://dba:dba@localhost:5432/brisa-helpdesk?schema=sc_helpdesk"
+  url      = "postgres://admin:admin@localhost:5432/helpdesk"
 }
 
 model tb_offering_type {
