@@ -30,7 +30,27 @@ export class OfferingRepository implements IBaseRepository<Offering> {
     }
 
     async findAll(): Promise<Offering[]> {
+        return this.findAllFiltered({});
+    }
+
+    async findAllFiltered(filters: {
+        name?: string;
+        isActive?: boolean;
+        isPhysical?: boolean;
+    }): Promise<Offering[]> {
+        const where: any = {};
+        if (filters.name) {
+            where.name = { contains: filters.name, mode: 'insensitive' };
+        }
+        if (filters.isActive !== undefined) {
+            where.is_active = filters.isActive;
+        }
+        if (filters.isPhysical !== undefined) {
+            where.is_physical = filters.isPhysical;
+        }
+
         const rows = await this.persistence.tb_offering.findMany({
+            where,
             include: { tb_offering_type: true },
             orderBy: { created_at: 'desc' },
         });
@@ -46,6 +66,7 @@ export class OfferingRepository implements IBaseRepository<Offering> {
     }
 
     async update(uuid: string, data: Partial<Offering>): Promise<Offering> {
+        // CHECK: How will it work when uuid doesn't exist on the database?
         const updated = await this.persistence.tb_offering.update({
             where: { uuid },
             data: {
@@ -55,6 +76,7 @@ export class OfferingRepository implements IBaseRepository<Offering> {
                 is_active: data.isActive,
                 description: data.description,
                 updated_at: data.updatedAt ?? new Date(),
+                //CHECK: Is it going to work properly?
                 ...(data.type?.uuid
                     ? { tb_offering_type: { connect: { uuid: data.type.uuid } } }
                     : {}),
