@@ -1,9 +1,9 @@
-import { OfferingType } from './offering-type/offering-type.entity';
+import { OfferingCategory } from './offering-category/offering-category.entity';
 
 export class Offering {
     constructor(
         public uuid: string,
-        public type: OfferingType,
+        public category: OfferingCategory,
         public internalCode: string,
         public name: string,
         public isPhysical: boolean,

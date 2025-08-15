@@ -6,13 +6,13 @@ export class OfferingResponseDto {
     @Expose()
     uuid: string;
 
-    @ApiProperty({ description: 'Offering type UUID' })
+    @ApiProperty({ description: 'Offering category UUID' })
     @Expose()
-    offering_type_uuid: string;
+    offering_category_uuid: string;
 
-    @ApiProperty({ description: 'Type of the offering' })
+    @ApiProperty({ description: 'Category of the offering' })
     @Expose()
-    offering_type_name: string;
+    offering_category_name: string;
 
     @ApiProperty({ description: 'Internal code for the offering', required: false })
     @Expose()

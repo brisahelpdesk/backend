@@ -1,16 +1,16 @@
 import { Expose } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class OfferingTypeResponseDto {
-    @ApiProperty({ description: 'Offering type UUID' })
+export class OfferingCategoryResponseDto {
+    @ApiProperty({ description: 'Offering category UUID' })
     @Expose()
     uuid: string;
 
-    @ApiProperty({ description: 'Offering type name' })
+    @ApiProperty({ description: 'Offering category name' })
     @Expose()
     name: string;
 
-    @ApiProperty({ description: 'Offering type description', required: false })
+    @ApiPropertyOptional({ description: 'Offering category description' })
     @Expose()
     description?: string;
 

@@ -2,9 +2,9 @@ import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateOfferingDto {
-    @ApiProperty({ description: 'Offering type UUID' })
+    @ApiProperty({ description: 'Offering category UUID' })
     @IsUUID()
-    offering_type_uuid: string;
+    offering_category_uuid: string;
 
     @ApiPropertyOptional({ description: 'Internal code for the offering' })
     @IsOptional()

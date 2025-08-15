@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OfferingRepository } from './offering.repository';
-import { OfferingTypeRepository } from './offering-type/offering-type.repository';
+import { OfferingCategoryRepository } from './offering-category/offering-category.repository';
 import { CreateOfferingDto } from './dto/create-offering.dto';
 import { UpdateOfferingDto } from './dto/update-offering.dto';
 import { OfferingResponseDto } from './dto/offering-response.dto';
 import { Offering } from './offering.entity';
-import { OfferingType } from './offering-type/offering-type.entity';
+import { OfferingCategory } from './offering-category/offering-category.entity';
 import { OfferingPrismaMapper } from './offering.mapper';
 import { ListOfferingsQueryDto } from './dto/list-offerings.query.dto';
 
@@ -13,18 +13,18 @@ import { ListOfferingsQueryDto } from './dto/list-offerings.query.dto';
 export class OfferingService {
     constructor(
         private readonly offeringRepository: OfferingRepository,
-        private readonly offeringTypeRepository: OfferingTypeRepository,
+        private readonly offeringCategoryRepository: OfferingCategoryRepository,
     ) {}
 
     async create(data: CreateOfferingDto): Promise<OfferingResponseDto> {
-        const type = await this.offeringTypeRepository.findByUUID(
-            data.offering_type_uuid,
+        const category = await this.offeringCategoryRepository.findByUUID(
+            data.offering_category_uuid,
         );
-        if (!type) {
-            throw new NotFoundException('Offering type not found');
+        if (!category) {
+            throw new NotFoundException('Offering category not found');
         }
 
-        const entity = OfferingPrismaMapper.createDtoToDomain(data, type);
+        const entity = OfferingPrismaMapper.createDtoToDomain(data, category);
 
         const created = await this.offeringRepository.create(entity);
         return OfferingPrismaMapper.toResponseDto(created);
@@ -60,25 +60,25 @@ export class OfferingService {
     }
 
     async update(uuid: string, data: UpdateOfferingDto): Promise<OfferingResponseDto> {
-        let type: OfferingType | undefined = undefined;
-        if (data.offering_type_uuid) {
-            const foundType = await this.offeringTypeRepository.findByUUID(
-                data.offering_type_uuid,
+        let category: OfferingCategory | undefined = undefined;
+        if (data.offering_category_uuid) {
+            const foundCategory = await this.offeringCategoryRepository.findByUUID(
+                data.offering_category_uuid,
             );
-            if (!foundType) {
-                throw new NotFoundException('Offering type not found');
+            if (!foundCategory) {
+                throw new NotFoundException('Offering category not found');
             }
-            type = new OfferingType(
-                foundType.uuid,
-                foundType.name,
-                foundType.created_at,
-                foundType.updated_at,
-                foundType.description,
+            category = new OfferingCategory(
+                foundCategory.uuid,
+                foundCategory.name,
+                foundCategory.createdAt,
+                foundCategory.updatedAt,
+                foundCategory.description,
             );
         }
 
         const updated = await this.offeringRepository.update(uuid, {
-            type,
+            category,
             internalCode: data.internal_code,
             name: data.name,
             isPhysical: data.is_physical,

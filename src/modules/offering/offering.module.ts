@@ -3,11 +3,13 @@ import { PersistenceModule } from '../persistence/persistence.module';
 import { OfferingController } from './offering.controller';
 import { OfferingService } from './offering.service';
 import { OfferingRepository } from './offering.repository';
-import { OfferingTypeRepository } from './offering-type/offering-type.repository';
+import { OfferingCategoryRepository } from './offering-category/offering-category.repository';
+import { OfferingCategoryController } from './offering-category/offering-category.controller';
+import { OfferingCategoryService } from './offering-category/offering-category.service';
 
 @Module({
     imports: [PersistenceModule],
-    controllers: [OfferingController],
-    providers: [OfferingService, OfferingRepository, OfferingTypeRepository],
+    controllers: [OfferingController, OfferingCategoryController],
+    providers: [OfferingService, OfferingRepository, OfferingCategoryRepository, OfferingCategoryService],
 })
 export class OfferingModule {} 

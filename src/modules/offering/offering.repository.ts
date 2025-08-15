@@ -19,11 +19,11 @@ export class OfferingRepository implements IBaseRepository<Offering> {
                 description: data.description,
                 created_at: data.createdAt ?? new Date(),
                 updated_at: data.updatedAt ?? new Date(),
-                tb_offering_type: {
-                    connect: { uuid: data.type.uuid },
+                tb_offering_category: {
+                    connect: { uuid: data.category.uuid },
                 },
             },
-            include: { tb_offering_type: true },
+            include: { tb_offering_category: true },
         });
 
         return OfferingPrismaMapper.toDomain(created);
@@ -51,7 +51,7 @@ export class OfferingRepository implements IBaseRepository<Offering> {
 
         const rows = await this.persistence.tb_offering.findMany({
             where,
-            include: { tb_offering_type: true },
+            include: { tb_offering_category: true },
             orderBy: { created_at: 'desc' },
         });
         return rows.map(OfferingPrismaMapper.toDomain);
@@ -60,7 +60,7 @@ export class OfferingRepository implements IBaseRepository<Offering> {
     async findByUUID(uuid: string): Promise<Offering | null> {
         const row = await this.persistence.tb_offering.findUnique({
             where: { uuid },
-            include: { tb_offering_type: true },
+            include: { tb_offering_category: true },
         });
         return row ? OfferingPrismaMapper.toDomain(row) : null;
     }
@@ -77,11 +77,11 @@ export class OfferingRepository implements IBaseRepository<Offering> {
                 description: data.description,
                 updated_at: data.updatedAt ?? new Date(),
                 //CHECK: Is it going to work properly?
-                ...(data.type?.uuid
-                    ? { tb_offering_type: { connect: { uuid: data.type.uuid } } }
+                ...(data.category?.uuid
+                    ? { tb_offering_category: { connect: { uuid: data.category.uuid } } }
                     : {}),
             },
-            include: { tb_offering_type: true },
+            include: { tb_offering_category: true },
         });
         return OfferingPrismaMapper.toDomain(updated);
     }
@@ -89,7 +89,7 @@ export class OfferingRepository implements IBaseRepository<Offering> {
     async delete(uuid: string): Promise<Offering> {
         const deleted = await this.persistence.tb_offering.delete({
             where: { uuid },
-            include: { tb_offering_type: true },
+            include: { tb_offering_category: true },
         });
         return OfferingPrismaMapper.toDomain(deleted);
     }

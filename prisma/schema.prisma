@@ -8,7 +8,7 @@ datasource db {
   url      = "postgres://admin:admin@localhost:5432/helpdesk"
 }
 
-model tb_offering_type {
+model tb_offering_category {
   id          BigInt   @id() @default(autoincrement())
   uuid        String   @unique() @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
@@ -20,16 +20,16 @@ model tb_offering_type {
 }
 
 model tb_offering {
-  id               BigInt   @id() @default(autoincrement())
-  uuid             String   @unique() @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  offering_type_id BigInt
-  internal_code    String
-  name             String
-  is_physical      Boolean
-  is_active        Boolean
-  description      String?
-  created_at       DateTime
-  updated_at       DateTime
+  id                    BigInt   @id() @default(autoincrement())
+  uuid                  String   @unique() @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  offering_category_id  BigInt
+  internal_code         String
+  name                  String
+  is_physical           Boolean
+  is_active             Boolean
+  description           String?
+  created_at            DateTime
+  updated_at            DateTime
 
-  tb_offering_type tb_offering_type @relation(fields: [offering_type_id], references: [id])
+  tb_offering_category  tb_offering_category @relation(fields: [offering_category_id], references: [id])
 }
